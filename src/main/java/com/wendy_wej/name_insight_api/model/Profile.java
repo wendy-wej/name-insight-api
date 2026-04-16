@@ -21,6 +21,12 @@ public class Profile {
     @Column(nullable=false)
     private String gender;
 
+    @Column(name = "gender_probability", nullable=false)
+    private Double genderProbability;
+
+    @Column(name = "sample_size", nullable=false)
+    private Integer sampleSize;
+
     @Column(nullable=false)
     private Integer age;
 
@@ -29,6 +35,9 @@ public class Profile {
 
     @Column(name = "country_id", nullable=false)
     private String countryId;
+
+    @Column(name = "country_probability", nullable=false)
+    private Double countryProbability;
 
     @Column(name = "created_at")
     private Instant createdAt;
