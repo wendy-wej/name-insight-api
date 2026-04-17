@@ -30,4 +30,11 @@ public class GlobalExceptionHandler {
                         null
                 ));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleGenericException(Exception ex) {
+        return ResponseEntity
+                .status(500)
+                .body(new ApiResponse<>("error", "An unexpected error occurred", null, null));
+    }
 }
