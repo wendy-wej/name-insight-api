@@ -1,6 +1,7 @@
 package com.wendy_wej.name_insight_api.service;
 
 import com.wendy_wej.name_insight_api.dto.AgifyResponse;
+import com.wendy_wej.name_insight_api.dto.ApiResponse;
 import com.wendy_wej.name_insight_api.dto.GenderizeResponse;
 import com.wendy_wej.name_insight_api.dto.NationalizeResponse;
 import com.wendy_wej.name_insight_api.exception.ExternalApiException;
@@ -8,6 +9,7 @@ import com.wendy_wej.name_insight_api.exception.ProfileNotFoundException;
 import com.wendy_wej.name_insight_api.model.Profile;
 import com.wendy_wej.name_insight_api.repository.ProfileRepository;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +28,20 @@ public class ProfileService {
         this.externalApiService = externalApiService;
     }
 
-    public Profile createProfile(String name) {
+    public class ProfileResult {
+        private final Profile profile;
+        private final boolean isNew;
+
+        public ProfileResult(Profile profile, boolean isNew) {
+            this.profile = profile;
+            this.isNew = isNew;
+        }
+
+        public Profile getProfile() { return profile; }
+        public boolean isNew() { return isNew; }
+    }
+
+    public ProfileResult createProfile(String name) {
 
 //        1. Check if a profile with that name already exists (use ProfileRepository)
 //        2. If yes → return it as-is
@@ -38,7 +53,7 @@ public class ProfileService {
 
         Optional<Profile> existingProfile = profileRepository.findByNameIgnoreCase(name);
         if (existingProfile.isPresent()) {
-            return existingProfile.get();
+            return new ProfileResult(existingProfile.get(), false);
         }
 
             GenderizeResponse genderizeResponse = externalApiService.getGender(name);
@@ -89,7 +104,7 @@ public class ProfileService {
                 profile.setCountryProbability(topCountry.getProbability());
             }
 
-            return profileRepository.save(profile);
+        return new ProfileResult(profileRepository.save(profile), true);
     }
 
     public Profile getProfileById(UUID id) {
@@ -98,8 +113,7 @@ public class ProfileService {
     }
 
     public List<Profile> getAllProfiles(String gender, String countryId, String ageGroup){
-        Specification<Profile> spec = Specification.where((Specification<Profile>) null);
-
+        Specification<Profile> spec = (root, query, cb) -> null;
         if (gender != null) {
             spec = spec.and((root, query, cb) ->
                     cb.equal(cb.lower(root.get("gender")), gender.toLowerCase()));
