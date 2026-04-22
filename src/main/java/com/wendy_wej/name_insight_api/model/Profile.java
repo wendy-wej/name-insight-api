@@ -1,5 +1,6 @@
 package com.wendy_wej.name_insight_api.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -40,6 +41,7 @@ public class Profile {
     private Double countryProbability;
 
     @Column(name = "created_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", timezone = "UTC")
     private Instant createdAt;
 
     @PrePersist

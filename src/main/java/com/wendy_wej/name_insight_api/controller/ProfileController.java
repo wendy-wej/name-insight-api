@@ -68,8 +68,8 @@ public class ProfileController {
     @GetMapping
     public ResponseEntity<?> getAllProfiles(
             @RequestParam(required = false) String gender,
-            @RequestParam(required = false) String countryId,
-            @RequestParam(required = false) String ageGroup){
+            @RequestParam(required = false, name = "country_id") String countryId,
+            @RequestParam(required = false, name = "age_group") String ageGroup){
         List<ProfileSummary> profiles = profileService.getAllProfiles(gender, countryId, ageGroup)
                 .stream().map(ProfileSummary::from).toList();
         return ResponseEntity.ok(new ApiResponse<>("success", null, profiles, profiles.size()));
